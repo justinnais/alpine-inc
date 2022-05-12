@@ -5,5 +5,5 @@ variable "aws-linux-2-ami" {
 
 variable "availability_zones" {
   default = ["us-east-1a", "us-east-1b", "us-east-1c"]
-  type    = list
+  type    = list(string)
 }

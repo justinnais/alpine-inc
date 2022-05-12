@@ -6,96 +6,34 @@ resource "aws_vpc" "main" {
   }
 }
 
-resource "aws_subnet" "public_az1" {
+resource "aws_subnet" "public_subnet" {
+  count                   = length(var.availability_zones)
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.0.0/22"
-  availability_zone       = "us-east-1a"
+  cidr_block              = cidrsubnet("10.0.0.0/16", 6, count.index)
+  availability_zone       = var.availability_zones[count.index]
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "Public AZ1"
+    Name = "public_az${count.index + 1}"
   }
 }
 
-resource "aws_subnet" "public_az2" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.4.0/22"
-  availability_zone       = "us-east-1b"
-  map_public_ip_on_launch = true
-
-  tags = {
-    Name = "Public AZ2"
-  }
-}
-
-resource "aws_subnet" "public_az3" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.8.0/22"
-  availability_zone       = "us-east-1c"
-  map_public_ip_on_launch = true
-
-  tags = {
-    Name = "Public AZ3"
-  }
-}
-
-resource "aws_subnet" "private_az1" {
+resource "aws_subnet" "private_subnet" {
+  count             = length(var.availability_zones)
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.16.0/22"
-  availability_zone = "us-east-1a"
-
+  cidr_block        = cidrsubnet("10.0.0.0/16", 6, count.index + length(var.availability_zones) + 1)
+  availability_zone = var.availability_zones[count.index]
   tags = {
-    Name = "Private AZ1"
+    Name = "private_az${count.index + 1}"
   }
 }
-
-resource "aws_subnet" "private_az2" {
+resource "aws_subnet" "data_subnet" {
+  count             = length(var.availability_zones)
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.20.0/22"
-  availability_zone = "us-east-1b"
-
+  cidr_block        = cidrsubnet("10.0.0.0/16", 6, count.index + (length(var.availability_zones) * 2) + 2)
+  availability_zone = var.availability_zones[count.index]
   tags = {
-    Name = "Private AZ2"
-  }
-}
-
-resource "aws_subnet" "private_az3" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.24.0/22"
-  availability_zone = "us-east-1c"
-
-  tags = {
-    Name = "Private AZ3"
-  }
-}
-
-resource "aws_subnet" "data_az1" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.32.0/22"
-  availability_zone = "us-east-1a"
-
-  tags = {
-    Name = "Data AZ1"
-  }
-}
-
-resource "aws_subnet" "data_az2" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.36.0/22"
-  availability_zone = "us-east-1b"
-
-  tags = {
-    Name = "Data AZ2"
-  }
-}
-
-resource "aws_subnet" "data_az3" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.40.0/22"
-  availability_zone = "us-east-1c"
-
-  tags = {
-    Name = "Data AZ3"
+    Name = "data_az${count.index + 1}"
   }
 }
 

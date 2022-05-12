@@ -2,7 +2,7 @@ resource "aws_lb" "app_lb" {
   name               = "app-lb"
   internal           = false
   load_balancer_type = "application"
-  subnets            = [aws_subnet.public_az1.id, aws_subnet.public_az2.id, aws_subnet.public_az3.id]
+  subnets            = aws_subnet.public_subnet.*.id
   tags = {
     Name = "App Load Balancer"
   }
