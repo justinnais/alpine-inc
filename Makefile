@@ -15,7 +15,7 @@ ansible-up:
 	cd ansible/scripts && ./run-ansible.sh
 
 infra-down:
-	cd infra && terraform destroy --auto-approve --force
+	cd infra && terraform destroy --auto-approve
 
 #
 
