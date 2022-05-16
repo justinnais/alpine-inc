@@ -55,6 +55,10 @@ resource "aws_security_group" "load_balancer_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  tags = {
+    Name = "Load Balancer SG"
+  }
+
 }
 
 resource "aws_security_group" "web_sg" {
@@ -86,6 +90,10 @@ resource "aws_security_group" "web_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  tags = {
+    Name = "Web SG"
+  }
+
 }
 
 resource "aws_security_group" "db_sg" {
@@ -115,6 +123,10 @@ resource "aws_security_group" "db_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "Database SG"
   }
 
 }
