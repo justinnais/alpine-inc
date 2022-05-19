@@ -50,3 +50,9 @@ pack:
 	mkdir ansible/files/ && \
 	mv src/simpletodoapp-1.0.1.tgz ansible/files/simpletodoapp-1.0.1.tgz; \
 	fi
+
+# install-make:
+# 	if [ $(dpkg-query -W -f='${Status}' nano 2>/dev/null | grep -c "ok installed") -eq 0 ];
+# 	then
+# 		apt-get install nano;
+# 	fi

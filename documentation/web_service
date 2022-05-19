@@ -1,0 +1,102 @@
+digraph "Web Service" {
+	graph [fontcolor="#2D3436" fontname="Sans-Serif" fontsize=30 label="Web Service" nodesep=0.60 pad=2.0 rankdir=TB ranksep=0.75 splines=ortho]
+	node [fixedsize=true fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 height=1.4 imagescale=true labelloc=b shape=box style=rounded width=1.4]
+	edge [color="#7B8894"]
+	b09e2b3e36d04e5abd48791351e9e58e [label=igw height=1.9 image="/home/justin/.local/lib/python3.8/site-packages/resources/aws/network/internet-gateway.png" shape=none]
+	subgraph "cluster_VPC: main
+CIDR: 10.0.0.0/16" {
+		graph [bgcolor="#E5F5FD" fontname="Sans-Serif" fontsize=30 label="VPC: main
+CIDR: 10.0.0.0/16" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+		"723d9ad733bf4fedb9ae340a2050c963" [label=Intermediate height=1.9 image="/home/justin/.local/lib/python3.8/site-packages/resources/generic/blank/blank.png" shape=none]
+		subgraph "cluster_Security Group: load_balancer_sg" {
+			graph [bgcolor="#FDF7E3" fontname="Sans-Serif" fontsize=12 label="Security Group: load_balancer_sg" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+			d7101b37be26427cbcf8353153e5e7ea [label=load_balancer_sg height=1.9 image="/home/justin/.local/lib/python3.8/site-packages/resources/aws/network/elastic-load-balancing.png" shape=none]
+		}
+		subgraph "cluster_Availability Zone: us-east-1a" {
+			graph [bgcolor="#EBF3E7" fontname="Sans-Serif" fontsize=12 label="Availability Zone: us-east-1a" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+			subgraph "cluster_Subnet: data_az1
+CIDR: 10.0.32.0/22" {
+				graph [bgcolor="#ECE8F6" fontname="Sans-Serif" fontsize=12 label="Subnet: data_az1
+CIDR: 10.0.32.0/22" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+				subgraph "cluster_Security Group: db_sg" {
+					graph [bgcolor="#FDF7E3" fontname="Sans-Serif" fontsize=12 label="Security Group: db_sg" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+					"330d59b88f6d4610a23ae00a0398e732" [label=db height=1.9 image="/home/justin/.local/lib/python3.8/site-packages/resources/aws/compute/ec2.png" shape=none]
+				}
+			}
+			subgraph "cluster_Subnet: private_az1
+CIDR: 10.0.16.0/22" {
+				graph [bgcolor="#ECE8F6" fontname="Sans-Serif" fontsize=12 label="Subnet: private_az1
+CIDR: 10.0.16.0/22" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+				subgraph "cluster_Security Group: web_sg" {
+					graph [bgcolor="#FDF7E3" fontname="Sans-Serif" fontsize=12 label="Security Group: web_sg" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+					"503290579b51404fa2afd9bd90782469" [label=web height=1.9 image="/home/justin/.local/lib/python3.8/site-packages/resources/aws/compute/ec2.png" shape=none]
+				}
+			}
+			subgraph "cluster_Subnet: public_az1
+CIDR: 10.0.0.0/22" {
+				graph [bgcolor="#ECE8F6" fontname="Sans-Serif" fontsize=12 label="Subnet: public_az1
+CIDR: 10.0.0.0/22" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+				"0a59f52605a8429d857df49253e3405f" [label="" height=1.9 image="/home/justin/.local/lib/python3.8/site-packages/resources/generic/blank/blank.png" shape=none]
+			}
+		}
+		subgraph "cluster_Availability Zone: us-east-1b" {
+			graph [bgcolor="#EBF3E7" fontname="Sans-Serif" fontsize=12 label="Availability Zone: us-east-1b" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+			subgraph "cluster_Subnet: data_az2
+CIDR: 10.0.36.0/22" {
+				graph [bgcolor="#ECE8F6" fontname="Sans-Serif" fontsize=12 label="Subnet: data_az2
+CIDR: 10.0.36.0/22" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+				"45fb1b11ee9549f4aa1aaab4bc258483" [label="" height=1.9 image="/home/justin/.local/lib/python3.8/site-packages/resources/generic/blank/blank.png" shape=none]
+			}
+			subgraph "cluster_Subnet: private_az2
+CIDR: 10.0.20.0/22" {
+				graph [bgcolor="#ECE8F6" fontname="Sans-Serif" fontsize=12 label="Subnet: private_az2
+CIDR: 10.0.20.0/22" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+				b8aece98945046ef8e3f5cc28d40d88c [label="" height=1.9 image="/home/justin/.local/lib/python3.8/site-packages/resources/generic/blank/blank.png" shape=none]
+			}
+			subgraph "cluster_Subnet: public_az2
+CIDR: 10.0.4.0/22" {
+				graph [bgcolor="#ECE8F6" fontname="Sans-Serif" fontsize=12 label="Subnet: public_az2
+CIDR: 10.0.4.0/22" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+				"236195141b8b483d9ac1912e2cb6def3" [label="" height=1.9 image="/home/justin/.local/lib/python3.8/site-packages/resources/generic/blank/blank.png" shape=none]
+			}
+		}
+		subgraph "cluster_Availability Zone: us-east-1c" {
+			graph [bgcolor="#EBF3E7" fontname="Sans-Serif" fontsize=12 label="Availability Zone: us-east-1c" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+			subgraph "cluster_Subnet: data_az3
+CIDR: 10.0.40.0/22" {
+				graph [bgcolor="#ECE8F6" fontname="Sans-Serif" fontsize=12 label="Subnet: data_az3
+CIDR: 10.0.40.0/22" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+				"866a8f76190b400d89859fdf36f5c03e" [label="" height=1.9 image="/home/justin/.local/lib/python3.8/site-packages/resources/generic/blank/blank.png" shape=none]
+			}
+			subgraph "cluster_Subnet: private_az3
+CIDR: 10.0.24.0/22" {
+				graph [bgcolor="#ECE8F6" fontname="Sans-Serif" fontsize=12 label="Subnet: private_az3
+CIDR: 10.0.24.0/22" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+				c8a9265fad604c608e222c5579fad502 [label="" height=1.9 image="/home/justin/.local/lib/python3.8/site-packages/resources/generic/blank/blank.png" shape=none]
+			}
+			subgraph "cluster_Subnet: public_az3
+CIDR: 10.0.8.0/22" {
+				graph [bgcolor="#ECE8F6" fontname="Sans-Serif" fontsize=12 label="Subnet: public_az3
+CIDR: 10.0.8.0/22" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+				"8a272b3637634049a549383cea98b11e" [label="" height=1.9 image="/home/justin/.local/lib/python3.8/site-packages/resources/generic/blank/blank.png" shape=none]
+			}
+		}
+	}
+	b09e2b3e36d04e5abd48791351e9e58e -> d7101b37be26427cbcf8353153e5e7ea [label="in: 80
+out: 0" dir=both fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	d7101b37be26427cbcf8353153e5e7ea -> "0a59f52605a8429d857df49253e3405f" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	d7101b37be26427cbcf8353153e5e7ea -> "236195141b8b483d9ac1912e2cb6def3" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	d7101b37be26427cbcf8353153e5e7ea -> "8a272b3637634049a549383cea98b11e" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"0a59f52605a8429d857df49253e3405f" -> "330d59b88f6d4610a23ae00a0398e732" [label="in: 80, 22
+out: 0" dir=both fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"236195141b8b483d9ac1912e2cb6def3" -> "330d59b88f6d4610a23ae00a0398e732" [label="in: 80, 22
+out: 0" dir=both fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"8a272b3637634049a549383cea98b11e" -> "330d59b88f6d4610a23ae00a0398e732" [label="in: 80, 22
+out: 0" dir=both fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"0a59f52605a8429d857df49253e3405f" -> "503290579b51404fa2afd9bd90782469" [label="in: 27017, 22
+out: 0" dir=both fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"236195141b8b483d9ac1912e2cb6def3" -> "503290579b51404fa2afd9bd90782469" [label="in: 27017, 22
+out: 0" dir=both fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"8a272b3637634049a549383cea98b11e" -> "503290579b51404fa2afd9bd90782469" [label="in: 27017, 22
+out: 0" dir=both fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+}
