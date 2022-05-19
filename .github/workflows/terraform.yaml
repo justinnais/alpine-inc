@@ -10,7 +10,24 @@ on:
       - main
 
 jobs:
+  generate-key: 
+    name: 'Generate Key'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Create key
+        run: make ssh-gen
+
+      - name: Upload key
+        uses: actions/upload-artifact@v3
+        with:
+          name: rmit-assignment-2-key
+          path: /tmp/keys/ec2-key.pub
+
   terraform:
+    needs: [generate-key]
     name: 'Terraform'
     runs-on: ubuntu-latest
     defaults:
@@ -35,8 +52,12 @@ jobs:
           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
         run: terraform init
 
-      - name: Create EC2 Key
-        run: cd .. && make ssh-gen
+      - name: Download Key
+        id: download-key
+        uses: actions/download-artifact@v3
+        with:
+          name: rmit-assignment-2-key
+          path: /tmp/keys
 
       - name: Terraform Validate
         id: validate
