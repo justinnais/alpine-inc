@@ -12,12 +12,10 @@ infra-up:
 	cd infra && terraform output
 
 ansible-up:
-	cd ansible/scripts && ./run-ansible.sh
+	cd scripts && ./run-ansible.sh
 
 infra-down:
 	cd infra && terraform destroy --auto-approve
-
-#
 
 infra-validate:
 	cd infra && terraform validate && terraform fmt
@@ -40,19 +38,18 @@ ssh-gen:
 infra-init:
 	cd infra && terraform init
 
-#
-
 pack:
 	cd src && npm pack
-	if [ -d "ansible/files/" ];	\
-	then mv src/simpletodoapp-1.0.1.tgz ansible/files/simpletodoapp-1.0.1.tgz;\
-	else \
-	mkdir ansible/files/ && \
-	mv src/simpletodoapp-1.0.1.tgz ansible/files/simpletodoapp-1.0.1.tgz; \
+	if [ ! -d "ansible/files" ]; \
+	then mkdir -p ansible/files; \
 	fi
+	mv src/notes-* ansible/files
 
 # install-make:
 # 	if [ $(dpkg-query -W -f='${Status}' nano 2>/dev/null | grep -c "ok installed") -eq 0 ];
 # 	then
 # 		apt-get install nano;
 # 	fi
+
+update-credentials:
+	cd scripts && bash ./update-secrets.sh

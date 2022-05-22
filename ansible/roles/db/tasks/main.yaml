@@ -1,0 +1,78 @@
+---
+# https://www.mongodb.com/docs/v4.4/tutorial/install-mongodb-on-red-hat/
+# Following this guide - doesn't work
+
+# - name: Create repo directory
+#   become: true
+#   shell:
+#     cmd: mkdir -p /etc/yum.repos.d/
+
+# - name: Create repo file
+#   become: true
+#   shell:
+#     cmd: |
+#       echo -e "[mongodb-org-4.4]
+#       name=MongoDB Repository
+#       baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.4/x86_64/
+#       gpgcheck=1
+#       enabled=1
+#       gpgkey=https://www.mongodb.org/static/pgp/server-4.4.asc" >> /etc/yum.repos.d/mongodb-org-4.4.repo
+
+# Both of these fail to install [Errno 14] HTTPS Error 404 - Not Found
+# - name: Install MongoDB
+#   become: true
+#   shell:
+#     cmd: yum install -y mongodb-org
+# - name: Install MongoDB
+#   become: true
+#   yum:
+#     name: mongodb-org
+#     state: latest
+
+# Can't use rpm package either
+# - name: Get Mongo setup script
+#   get_url:
+#     url: https://repo.mongodb.org/yum/redhat/8/mongodb-org/4.4/x86_64/RPMS/mongodb-org-4.4.9-1.el8.x86_64.rpm
+#     dest: /tmp/mongo-package.rpm
+
+# - name: Upgrade all packages
+#   become: true
+#   yum:
+#     name: '*'
+#     state: latest
+
+# - name: Install Mongo
+#   become: true
+#   yum:
+#     name: mongodb-org
+#     state: latest
+
+# Using docker?
+# - name: Install docker
+#   become: true
+#   shell:
+#     cmd: |
+#       sudo yum update -y
+#       sudo yum install -y docker
+#       sudo service docker start
+#       sudo usermod -a -G docker ec2-user
+#       Docker version 17.09.1-ce, build
+
+# - name: Install docker compose
+#   become: true
+#   shell:
+#     cmd: |
+#       sudo curl -L https://github.com/docker/compose/releases/download/1.20.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+#       chmod +x /usr/local/bin/docker-compose
+
+# - name: Copy docker-compose.yml to /usr/local/bin
+#   become: true
+#   copy:
+#     src: ../../docker-compose.yml
+#     dest: /usr/local/bin/docker-compose.yml
+
+# - name: Pull docker images
+#   become: true
+#   docker_image:
+#     name: mongo
+#     state: present

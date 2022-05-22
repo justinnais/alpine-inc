@@ -1,0 +1,54 @@
+---
+# Setting up the web server with Node.js
+
+- name: Get Node setup script
+  get_url:
+    url: https://rpm.nodesource.com/setup_15.x
+    dest: /tmp/node-setup.sh
+    mode: 0777
+
+- name: Execute setup script
+  become: true
+  command: sh /tmp/node-setup.sh
+
+- name: Upgrade all packages
+  become: true
+  yum:
+    name: '*'
+    state: latest
+
+- name: Install Node
+  become: true
+  yum:
+    name: nodejs
+    state: latest
+
+- name: Create www directory
+  become: true
+  shell:
+    cmd: mkdir -p /var/www
+
+
+- name: Extract build into remote host
+  become: true
+  ansible.builtin.unarchive:
+    src: ../../ansible/files/notes-1.0.0.tgz
+    dest: /var/www
+
+- name: Install packages based on package.json using the npm
+  become: true
+  npm:
+    path: "{{ app_path }}"
+    state: present
+
+# Neither of these run commands work, have tried to follow Lab 7, 8 and 11 exactly and will not run the app
+# - name : Run application
+#   become: true
+#   shell:
+#     cmd: service notes start
+- name : Run application
+  become: true
+  service:
+    name: notes.service
+    state: started
+

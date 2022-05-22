@@ -129,6 +129,7 @@ For first time setup, you will have to:
 1. Add AWS keys to `~/.aws/credentials`
 1. Run `make ssh-keygen` to create your EC2 keys
 1. Run `make bootstrap` to create a Terraform remote state
+1. Add the output details into `backend "s3"` inside `infra/main.tf`
 1. Run `make infra-init` to initialise your Terraform state
 
 ### Run
@@ -171,7 +172,7 @@ We encountered some other limitations with the new infrastructure setup.
 
 1. AWS Secret Expiry
 
-   > We are storing our AWS secrets in GitHub Secrets, ensuring that they are not being commited to our repository. However, due to the limit on our AWS Console, they expire every 4 hours. <p>This means we have to manually update our secrets. This would not be an issue with a normal AWS environment.<p>TODO try to automate with `gh secret set <secret-name>` and a make command.
+   > We are storing our AWS secrets in GitHub Secrets, ensuring that they are not being commited to our repository. However, due to the limit on our AWS Console, they expire every 4 hours. <p>This means we have to manually update our secrets. This would not be an issue with a normal AWS environment.<p>To make this easier, we created a Shell script that updates the secrets automatically when run. Note - make sure your `~/.aws/credentials` file has your latest secrets in it. Run it with `make update-credentials`
 
 1. Key Generation
 
@@ -180,3 +181,15 @@ We encountered some other limitations with the new infrastructure setup.
 1. Diagrams as Code
 
    > We attempted to use Diagrams as Code to generate AWS diagrams from our Terraform state. With a bit of transformation some progress was made, however the limitations of Diagrams (not possible to link two lists together) meant we went back to a manual diagram.
+
+1. Private Subnets
+
+   > The subnets that we deploy our EC2 instances to are `private_az1` and `data_az1`. These do not output IP addresses as they are not public subnets. For the scope of this assignment, these subnets have been mapped public IP addresses, as instructed in Canvas Discussions.
+
+1. Ansible
+
+   > We had issues getting Ansible working as intended. The `run-ansible.sh` script creates an inventory file with the hosts for `web` and `db` instances, using the Terraform output. Then the Playbook runs, which applys the common template to both instances, before trying to setup the Node app on `web` and MongoDB on `db`.
+   >
+   > This fails due to error `TASK [web : Run application] fatal: [web]: FAILED! => {"changed": false, "msg": "Could not find the requested service notes.service: host"}`
+   >
+   > Many hours were spent attempting to get this working with little progress, despite following all the instructions in lab documents.

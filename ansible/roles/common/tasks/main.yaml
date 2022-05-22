@@ -1,0 +1,11 @@
+# Apply the template - may only need to be on web
+- name: Create template directory
+  become: true
+  shell:
+    cmd: mkdir -p "{{ service_path }}"
+
+- name: template file onto remote hosts
+  become: true
+  template:
+    src: notes.service.tpl
+    dest: "{{ service_path }}"

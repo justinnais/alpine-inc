@@ -1,8 +1,20 @@
-- name: Deploy Application
+---
+# https://github.dev/ansible/ansible-examples/tree/master/lamp_simple
+- name: Apply common config
   hosts: all
+  roles:
+    - common
 
-  tasks: 
-    - name: Create a file called '/tmp/testfile.txt' with the content 'hello world'.
-      copy:
-        content: hello world
-        dest: /tmp/testfile.txt
+# Both jobs are disable as Ansible doesn't like being nice :) see main.yaml in db and web for more details on issues
+
+
+# - name: Deploy MongoDB to db instance
+#   hosts: db
+#   roles:
+#     - db
+    
+# - name: Deploy application to web instance
+#   hosts: web
+#   roles:
+#     - web
+
