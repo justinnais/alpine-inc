@@ -2,6 +2,7 @@ resource "aws_lb" "app_lb" {
   name               = "app-lb"
   internal           = false
   load_balancer_type = "application"
+  security_groups = [aws_security_group.load_balancer_sg.id]
   subnets            = aws_subnet.public_subnet.*.id
   tags = {
     Name = "App Load Balancer"
@@ -13,6 +14,7 @@ resource "aws_lb_target_group" "app_lb_tg" {
   port     = 80
   protocol = "HTTP"
   vpc_id   = aws_vpc.main.id
+
   tags = {
     Name = "App LB Target Group"
   }

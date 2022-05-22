@@ -42,50 +42,61 @@ Just like the rest of our code, it can be stored in our source control, GitHub. 
 
 AWS has their own IaC platform, CloudFormation, however we have chosen to use HashiCorp's Terraform due to its flexibility between cloud providers, allowing us to migrate to another provider in the future without having to relearn their in-house syntax.
 
-- [ ] Screenshot of application in AWS, include browser URL
+No screenshot of application due to Ansible issues.
 
 ## Architecture
 
-Our architecture is built exclusively on AWS.
+Our architecture is built with Amazon Web Services.
 
-> <img src="./documentation/web_service.png"/>
+> <img src="./documentation/architecture.png"/>
 >
-> Created with [Diagrams as Code](https://diagrams.mingrammer.com/)
+> Created with [onemodel](https://www.onemodel.app/)
 
-Includes:
+Resources we are provisioning include:
 
-- [x] VPC
-  - The Virtual Private Cloud is deployed into CIDR block `10.0.0.0/16`. This is where we launch our other resources into.
-- [x] Availability Zones
-  - We are operating within three Availability Zones:
-    - `us-east-1a`
-    - `us-east-1b`
-    - `us-east-1c`
-  - These three data centers allow us to spread out the load from our inbound traffic, with load balancers in all three. We deploy our EC2 Instances to `us-east-1a` but are ready to quickly replicate to the other two if required.
-- [x] Subnets
-  - We have nine Subnets, three in each Availability Zone. Our public, private and data subnets are:
-    - `public_az1`, `public_az2`, `public_az3`
-    - `private_az1`, `private_az2`, `private_az3`
-    - `data_az1`, `data_az2`, `data_az3`
-  - These are using different CIDR blocks, TODO explain more about subnets
-- [x] Internet Gateway
-  - The Internet Gateway allows our VPC to send and receieve traffic from the internet
-  - We also use Route Tables to control network traffic and direct it to the IGW
-  - [ ] Route Table
-- [x] EC2 Instances
-  - EC2s are virtual environments that we deploy our applications to.
-  - We have:
-    - Web application instance
-    - Database instance
-  - Both instances are running on the latest Amazon Linux AMI
-- [ ] Security groups
-  - Security groups act as virtual firewalls to control inbound and outbound traffic.
-  - We have security groups for our
-    - Load balancers
-    - Web application instance
-    - Database instance
-- [ ] Ports
-- [ ] port numbers on lines with traffic
+- VPC
+
+  > The Virtual Private Cloud is deployed into CIDR block `10.0.0.0/16`. This is where we launch our other resources into.
+
+- Availability Zones
+
+  > We are operating within three Availability Zones:
+  >
+  > - `us-east-1a`
+  > - `us-east-1b`
+  > - `us-east-1c`
+  >
+  > <br>These three data centers allow us to spread out the load from our inbound traffic, with load balancers in all three. We deploy our EC2 Instances to `us-east-1a` but are ready to quickly replicate to the other two if required.
+
+- Subnets
+
+  > We have nine Subnets, three in each Availability Zone. Our public, private and data subnets are:
+  >
+  > - `public_az1`, `public_az2`, `public_az3`
+  > - `private_az1`, `private_az2`, `private_az3`
+  > - `data_az1`, `data_az2`, `data_az3`
+  >
+  > <br>Note the limitations of this assignment mean all subnets are public, where normally private and data subnets would be private.
+
+- Internet Gateway
+  > The Internet Gateway allows our VPC to send and receieve traffic from the internet.
+  >
+  > We also use Route Tables to control network traffic and direct it to the IGW.
+- EC2 Instances
+  > EC2s are virtual environments that we deploy our applications to.
+  > We have:
+  >
+  > - Web application instance
+  > - Database instance
+  >
+  > <br>Both instances are running on the latest Amazon Linux AMI.
+- Security Groups
+  > Security groups act as virtual firewalls to control inbound and outbound traffic.
+  > We have security groups for our:
+  >
+  > - Load balancers
+  > - Web application instance
+  > - Database instance
 
 We also have an S3 Bucket and DynamoDB table for our Terraform state file, allowing multiple developers to work on the infrastructure at the same time without conflicts.
 
@@ -119,15 +130,13 @@ sudo add-apt-repository --yes --update ppa:ansible/ansible
 sudo apt install ansible
 ```
 
-TODO turn into a make command?
-
 ### Initial Setup
 
 For first time setup, you will have to:
 
 1. Get your AWS access key and token from your environment
 1. Add AWS keys to `~/.aws/credentials`
-1. Run `make ssh-keygen` to create your EC2 keys
+1. Run `make ssh-gen` to create your EC2 keys
 1. Run `make bootstrap` to create a Terraform remote state
 1. Add the output details into `backend "s3"` inside `infra/main.tf`
 1. Run `make infra-init` to initialise your Terraform state
@@ -135,6 +144,10 @@ For first time setup, you will have to:
 ### Run
 
 To build your infrastructure and deploy your app, run `make all-up`
+
+This will build AWS resources using Terraform, then runs an shell script that uses Ansible to setup the web and database EC2 instances.
+
+ALternatively, you can break these steps up individually with `make infra-up` and `make ansible-up`
 
 ### Teardown
 
@@ -158,13 +171,13 @@ The main issues with deploying to a single instance are:
 
 Alternative options to running our database in EC2 instances are:
 
-1. DocumentDB
+1. AWS DocumentDB
 
    > Migrate database to DocumentDB, which uses the same APIs as MongoDB. Details on how to migrate can be found [here.](https://docs.aws.amazon.com/documentdb/latest/developerguide/docdb-migration.html)
 
-1. TODO second alternative
+1. MongoDB Atlas
 
-   > TODO
+   > [Atlas](https://www.mongodb.com/atlas) is a fully-managed cloud database that handles the complexity of managing and deploying the database. It handles the clusters and deals with replication in multiple regions ensuring low latency and data redundancy.
 
 ### Other
 
@@ -172,7 +185,7 @@ We encountered some other limitations with the new infrastructure setup.
 
 1. AWS Secret Expiry
 
-   > We are storing our AWS secrets in GitHub Secrets, ensuring that they are not being commited to our repository. However, due to the limit on our AWS Console, they expire every 4 hours. <p>This means we have to manually update our secrets. This would not be an issue with a normal AWS environment.<p>To make this easier, we created a Shell script that updates the secrets automatically when run. Note - make sure your `~/.aws/credentials` file has your latest secrets in it. Run it with `make update-credentials`
+   > We are storing our AWS secrets in GitHub Secrets, ensuring that they are not being commited to our repository. However, due to the limit on our AWS Console, they expire every 4 hours. <p>This means we have to manually update our secrets. This would not be an issue with a normal AWS environment.<p>To make this easier, we created a Shell script that updates the secrets automatically when run. This requires [GitHub CLI](https://cli.github.com/). Run it with `make update-credentials`. Note - make sure your `~/.aws/credentials` file has your latest secrets in it. 
 
 1. Key Generation
 
@@ -180,7 +193,9 @@ We encountered some other limitations with the new infrastructure setup.
 
 1. Diagrams as Code
 
-   > We attempted to use Diagrams as Code to generate AWS diagrams from our Terraform state. With a bit of transformation some progress was made, however the limitations of Diagrams (not possible to link two lists together) meant we went back to a manual diagram.
+   > We attempted to use [Diagrams as Code](https://diagrams.mingrammer.com/) to generate AWS diagrams from our Terraform state. With a bit of transformation some progress was made, however the limitations of Diagrams (not possible to link two lists together) meant we went back to a manual diagram.
+   >
+   > <img src="./documentation/web_service.png"/>
 
 1. Private Subnets
 
@@ -192,4 +207,4 @@ We encountered some other limitations with the new infrastructure setup.
    >
    > This fails due to error `TASK [web : Run application] fatal: [web]: FAILED! => {"changed": false, "msg": "Could not find the requested service notes.service: host"}`
    >
-   > Many hours were spent attempting to get this working with little progress, despite following all the instructions in lab documents.
+   > Many hours were spent attempting to get this working with little progress, despite following all the instructions in lab documents and plenty of research.
