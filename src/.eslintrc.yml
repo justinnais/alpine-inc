@@ -5,6 +5,7 @@ env:
   jest: true
 extends:
   - eslint:recommended
+  - prettier
 globals:
   Atomics: readonly
   SharedArrayBuffer: readonly

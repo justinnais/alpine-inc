@@ -1,6 +1,113 @@
-# Alpine Inc 🗻 COSC2759 Assignment 2
+# Alpine Inc 🗻
 
-Created by **Justin Naismith** | s3605206
+Created by **Justin Naismith**
+
+The following analysis was done for System Deployment and Operations at RMIT University. This was completed over two assignments but has been combined into one repository for visibility.
+
+- Part 1 covers the setup of a Continuous Integration pipline using GitHub Actions - 100%
+- Part 2 implements Infrastructure as Code using Terraform and AWS - 94%
+
+# Part 1
+
+## Analysis of the problem
+
+> Alpine Inc's current development strategy has a numerous problems that need to be addressed. These issues are affecting vital customer deliveries, employee satisfaction, and Alpine Inc's bottom line.
+
+**Key issues include:**
+
+### 1. Application is manually built and deployed
+
+The notes application relies on a manual process to build and deploy. This can introduce bugs due to different environments depending on the device this takes place on. It is also a waste of time resources, using developer time on a process that can be automated.
+
+### 2. Build and deployment from a single laptop.
+
+By building and deploying from a single device, Alpine Inc is introducing a single point of failure within their development process.
+
+That device is prone to environment variables changes (e.g. Node version) and operating system updates which can create bugs and inconsistencies when building. It can also be unavailable, offline, or broken. This results in no deployments going out until the device is back working.
+
+We can see how this has affected Alpine Inc and it's customers when the lead developer was on leave. Work halted and a client missed a critical release.
+
+### 3. Increase of bugs in production.
+
+The amount of bugs making it through to production is having a negative impact on client and employee satisfaction.
+Having developers focus on support calls is taking away time from day to day processes. This is resulting in overtime for staff, which is bad for moral and costing the business financially.
+
+This is an indication of a not enough testing, or ineffective testing.
+
+## Solution
+
+We will create a CI pipeline to resolve the above issues. An automated pipeline will remove the need for a developer to manually run the build, package and deploy the application. This gives them time back to focus on providing value for the business and its clients.
+
+By creating a pipeline using a CI/CD platform such as GitHub actions, the process is completed right in the Alpine Inc repository, removing the dependency on the lead developers laptop. This could be run from anywhere by any developer with appropriate privileges, or even better - automated based on events like pull requests and releases.
+
+There needs to be a stronger focus on testing to minimise the bugs being pushed to production. We will automate our:
+
+- Unit testing
+- Integration testing
+- End-to-end testing
+
+We will be reporting our code coverage as well to ensure our entire codebase is being tested, helping us to identify where we are missing tests.
+
+We will also add linting rules to the repository to ensure consistent code style throughout the team.
+
+### Pipeline
+
+The pipeline contains the following stages:
+
+1. Linting
+
+   > Linting uses ESLint to analyse the codebase for bugs, easy to miss errors, and style inconsistencies. If there are any errors created due to rules set in our `.eslintrc.yml`, the pipeline will fail and break the build.
+
+2. Unit Testing
+
+   > Unit testing uses Jest to check that individual functions work as intended, isolating the code and ensuring its correctness. We also check the code coverage, to make sure we are keeping up with our unit tests. This is uploaded as an artifact when the pipeline runs. If any of our unit tests fail, the pipeline will fail and break the build.
+
+3. Integration Testing
+
+   > Integration testing also uses Jest, but to check that when the individual units are combined into the whole system, they all work as intented together. For example, our pipeline sets up a Mongodb docker container to host our server, and we check that works to create notes and redirect the user, as we intend in our code. This will also upload a code coverage artifact when run, and will break the build on failure of any tests.
+
+4. End-to-end Testing
+
+   > End-to-end testing makes use of Playwright to simulate to process of a real user operating the system. Just as a user would, it navigates the site, looking for inputs or text to guide it, and entering data. This also uploads test results as an artifact, and breaks the build on test failure.
+
+5. Static Analysis Security Testing
+   > Static Analysis Security Testing checks the code for any security vulnerabilities. We are using nodejsscan to check our Node application for any issues. We are breaking the build if there are any security issues in the report.
+6. Package
+   > Package creates a tarball of the Node application which we upload on changes to the main branch as an artifact.
+
+Each stage relies on the previous to succeed:
+
+```mermaid
+graph TD
+    A(Linting) --> B(Unit Testing)
+    B --> D[Upload Unit Test Coverage Artifact]
+    B --> E(Integration Testing)
+    E --> F[Upload Integration Test Coverage Artifact]
+    E --> G(End-to-End Testing)
+    G --> H[Upload E2E Test Report Artifact]
+    G --> K(Static Analysis Security Testing)
+    K --> L[Upload SAST results]
+    K --> |if on main| M(Package)
+    M --> N[Upload Release Artifact]
+```
+
+### Success Scenario
+
+If there are no issues in our pipeline, it will return a `success` status. It will package the application if it is on the main branch.
+
+<img src="./documentation/pipeline-success.png"/>
+
+### Failure Scenario
+
+Our CI pipeline will break the build if any of these steps fail, preventing buggy code from entering our releases.
+
+Here is an example:
+
+> The integration test was setup to fail, and the pipeline will stop on this step, returning a `failure` status. It also uploads to code coverage artifacts of the failed tests.
+
+<img src="./documentation/pipeline-fail.png"/>
+
+# Part 2
 
 ## Analysis of the problem
 
@@ -185,7 +292,7 @@ We encountered some other limitations with the new infrastructure setup.
 
 1. AWS Secret Expiry
 
-   > We are storing our AWS secrets in GitHub Secrets, ensuring that they are not being commited to our repository. However, due to the limit on our AWS Console, they expire every 4 hours. <p>This means we have to manually update our secrets. This would not be an issue with a normal AWS environment.<p>To make this easier, we created a Shell script that updates the secrets automatically when run. This requires [GitHub CLI](https://cli.github.com/). Run it with `make update-credentials`. Note - make sure your `~/.aws/credentials` file has your latest secrets in it. 
+   > We are storing our AWS secrets in GitHub Secrets, ensuring that they are not being commited to our repository. However, due to the limit on our AWS Console, they expire every 4 hours. <p>This means we have to manually update our secrets. This would not be an issue with a normal AWS environment.<p>To make this easier, we created a Shell script that updates the secrets automatically when run. This requires [GitHub CLI](https://cli.github.com/). Run it with `make update-credentials`. Note - make sure your `~/.aws/credentials` file has your latest secrets in it.
 
 1. Key Generation
 
