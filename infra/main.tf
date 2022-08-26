@@ -6,10 +6,10 @@ terraform {
     }
   }
   backend "s3" {
-    bucket            = "rmit-tfstate-3sirfd"
+    bucket            = "rmit-tfstate-g0dz82"
     key               = "assignment-2/infra-deployment"
     region            = "us-east-1"
-    dynamodb_table    = "rmit-locktable-3sirfd"
+    dynamodb_table    = "rmit-locktable-g0dz82"
     dynamodb_endpoint = "https://dynamodb.us-east-1.amazonaws.com"
   }
 }
