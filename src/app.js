@@ -23,7 +23,7 @@ mongoose.connect(process.env.SERVER, {
 
 app.use('/', notesRouter);
 app.listen(process.env.PORT || 3000, () => {
-  console.log(`Server Has Started`);
+  console.log(`Server has started on http://localhost:3000`);
 });
 
 module.exports = app;

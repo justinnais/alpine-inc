@@ -178,3 +178,26 @@ jobs:
       - name: Ansible Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: cd scripts && ./run-ansible.sh
+
+  destroy:
+    # Always destroy to prevent AWS billing
+    needs: [terraform, ansible]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    name: 'Destroy Infrastructure'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Destroy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+        run: terraform destroy --auto-approve
