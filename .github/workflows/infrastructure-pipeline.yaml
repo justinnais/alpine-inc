@@ -195,6 +195,21 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
+      - name: Terraform Init
+        id: init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+        run: terraform init
+
+      - name: Download Key
+        id: download-key
+        uses: actions/download-artifact@v3
+        with:
+          name: rmit-assignment-2-key
+          path: /tmp/keys
+
       - name: Terraform Destroy
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
