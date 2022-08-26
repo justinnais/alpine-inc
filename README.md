@@ -5,7 +5,7 @@ Created by **Justin Naismith**
 The following analysis was done for System Deployment and Operations at RMIT University. This was completed over two assignments but has been combined into one repository for visibility.
 
 - Part 1 covers the setup of a Continuous Integration pipline using GitHub Actions - 100%
-- Part 2 implements Infrastructure as Code using Terraform and AWS - 94%
+- Part 2 implements Infrastructure as Code using Terraform and AWS - 90%
 
 # Part 1
 
