@@ -55,8 +55,6 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
-.env
 
 #misc files
 sast-output.json

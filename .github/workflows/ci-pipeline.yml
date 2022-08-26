@@ -1,5 +1,8 @@
 name: Notes Application CI Pipeline
 
+env:
+  SERVER: mongodb://localhost:27017
+
 on:
   push:
     branches:
