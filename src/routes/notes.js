@@ -20,10 +20,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-// router.delete('/:id', async (req, res) => {
-//   await res.redirect('/');
-// });
-
 router.delete('/:id', async (req, res) => {
   try {
     await Note.findByIdAndRemove(req.params.id);
